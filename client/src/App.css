@@ -1,10 +1,7 @@
 .container {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  height: 100vh;
+  position: fixed;
+  bottom: 0;
 }
-
 .chatbox {
   display: inline-block;
   position: relative; /* stay relative */
@@ -20,7 +17,11 @@
   height:52px; 
 }
 
-.chatbox textarea {
+.chatArea {
+  padding: 5px 50px;
   display: block;
+}
+
+.chatbox textarea {
   resize: none;
 }

@@ -10,6 +10,9 @@ wss.on("connection", client => {
   client.send(`{ "connection": "ok" }`) // conn
   client.on("message", message => {
     console.log(`received: ${message}`)
+    wss.clients.forEach(otherClient => {
+      otherClient.send(message)
+    })
   })    
 })
 
