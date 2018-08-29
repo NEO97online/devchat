@@ -3,7 +3,6 @@ import logo from './logo.svg'
 import './App.css'
 
 class App extends Component {
-
   constructor() {
     super()
     this.state = {}
@@ -13,9 +12,11 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        <div style={ {textAlign: "center"} } >
-          <textarea placeholder="Enter text" id="msg" cols="100" rows="3"></textarea>
-          <button>Send</button>
+        <div className="container">
+          <div className="chatbox">
+            <textarea placeholder="Enter text" id="msg" cols="100" rows="3"></textarea>
+            <button>Send</button>
+          </div>
         </div>
       </Fragment>
     )

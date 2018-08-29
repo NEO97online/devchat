@@ -1,0 +1,18 @@
+{
+  "presets": ["env"],
+  "plugins": [
+    [
+      "babel-plugin-inline-import",
+      {
+        "extensions": [".json", ".gql", ".graphql"]
+      }
+    ],
+    ["syntax-object-rest-spread"],
+    [
+      "transform-runtime", {
+        "polyfill": false,
+        "regenerator": true
+      }
+    ]
+  ]  
+}
