@@ -46,7 +46,9 @@ class App extends Component {
     return (
       <Fragment>
         {this.state.messages.map(message => (
-          <div className="chatArea">{message}</div>
+          <pre>
+            <div className="chatArea">{message}</div>
+          </pre>
         ))}
         <div className="container">
           <div className="chatbox">
