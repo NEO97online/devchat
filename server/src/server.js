@@ -1,28 +1,40 @@
-import http from "http"
-import path from "path"
-import express from "express"
-import WebSocket from "ws" // use the right package!
-import expressWs from "express-ws"
-import mongoose from "mongoose"
+import {} from 'dotenv/config'
+import http from 'http'
+import path from 'path'
+import express from 'express'
+import expressWs from 'express-ws'
+import mongoose from 'mongoose'
+import helmet from 'helmet'
+import basicAuth from 'express-basic-auth'
 
 const PORT = process.env.PORT || 4000
 
 const app = express()
-expressWs(app)
+app.use(helmet()) // Always wear a helment!
+const wss = expressWs(app).getWss()
 
-app.ws('/', (ws, req) => {
-  ws.on("connection", client => {
-    console.log('connected')
-    client.send(`{ "connection": "ok" }`) // conn
-    client.on("message", message => {
+// app.ws is added by running expressWs(app) on line 14
+app.ws('/', (client, req) => {
+  try {
+    client.send(`{ "connection": "ok" }`) // connection sucessful
+    client.on('message', message => {
       console.log(`received: ${message}`)
-      ws.clients.forEach(otherClient => {
+      wss.clients.forEach(otherClient => {
         otherClient.send(message)
       })
     })
-  })
+  } catch (err) {
+    console.error(err)
+  }
 })
 
-app.use('/', express.static(path.join(__dirname, "../../client/build")))
+app.use(
+  basicAuth({
+    users: { dev: process.env.SITELOCK_PASSWORD },
+    challenge: true
+  })
+)
+
+app.use('/', express.static(path.join(__dirname, '../../client/build')))
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT} at ${new Date().toLocaleString()}`))

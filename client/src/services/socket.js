@@ -1,11 +1,12 @@
 const connection = new WebSocket('ws://localhost:4000') // Update for production variable
 
 connection.onopen = () => {
-  // connection.send('Ping')
+  console.log('connected socket')
+  connection.send('Ping')
 }
 
 connection.onerror = (error) => { 
-  console.log(`WebSocket error: ${error}`)
+  console.log(`WebSocket error: ${error.toString()}`)
 }
 
 const send = (message) => {

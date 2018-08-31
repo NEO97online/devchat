@@ -7,7 +7,7 @@ class App extends Component {
     super()
     this.state = {
       chatboxText: '',
-      messages: []
+      messages: ["Test Message"]
     }
     socket.listen(this.receiveMessage)
   }
