@@ -15,13 +15,27 @@ const wss = expressWs(app).getWss()
 
 // app.ws is added by running expressWs(app) on line 14
 app.ws('/', (client, req) => {
+
+  let username = 'anonymous'
+
   // need to try/catch because express-ws is catching our errors without logging them 😠
   try {
     client.send(`{ "connection": "ok" }`) // connection sucessful
     client.on('message', message => {
       console.log(`received: ${message}`)
+
+      if (message[0] === '/') {
+        const args = message.split(' ')
+        const command = args.shift()
+        if (command === '/login') {
+          username = args[0]
+          client.send(`Username set to ${username}`)
+        }
+        return
+      }
+
       wss.clients.forEach(otherClient => {
-        otherClient.send(message)
+        otherClient.send(`${username}: ${message}`)
       })
     })
   } catch (err) {

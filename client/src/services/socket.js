@@ -6,7 +6,7 @@ connection.onopen = () => {
   connection.send('Ping')
 }
 
-connection.onerror = (error) => { 
+connection.onerror = (error) => {  
   console.log(`WebSocket error: ${error.toString()}`)
 }
 
