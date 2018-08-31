@@ -7,6 +7,7 @@
     "start": "cd server && npm start",
     "start:client": "cd client && npm start",
     "start:server": "cd server && npm start",
+    "dev:server": "cd server && npm run dev",
     "build:client": "cd client && npm install && npm run build",
     "build:server": "cd server && npm install && npm run build",
     "heroku-postbuild": "npm run build:client && npm run build:server"

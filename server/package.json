@@ -11,6 +11,7 @@
     "babel-preset-env": "^1.7.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "express-ws": "^4.0.0",
     "helmet": "^3.13.0",
     "mongoose": "^5.2.10",
     "ws": "^6.0.0"

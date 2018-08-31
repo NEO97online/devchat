@@ -1,19 +1,28 @@
 import http from "http"
+import path from "path"
+import express from "express"
 import WebSocket from "ws" // use the right package!
+import expressWs from "express-ws"
 import mongoose from "mongoose"
 
-const port = process.env.PORT || 4000   
+const PORT = process.env.PORT || 4000
 
-const wss = new WebSocket.Server({ port })
+const app = express()
+expressWs(app)
 
-wss.on("connection", client => {
-  client.send(`{ "connection": "ok" }`) // conn
-  client.on("message", message => {
-    console.log(`received: ${message}`)
-    wss.clients.forEach(otherClient => {
-      otherClient.send(message)
+app.ws('/', (ws, req) => {
+  ws.on("connection", client => {
+    console.log('connected')
+    client.send(`{ "connection": "ok" }`) // conn
+    client.on("message", message => {
+      console.log(`received: ${message}`)
+      ws.clients.forEach(otherClient => {
+        otherClient.send(message)
+      })
     })
-  })    
+  })
 })
 
-console.log(`Listening on port ${port} at ${new Date().toLocaleString()}`)
+app.use('/', express.static(path.join(__dirname, "../../client/build")))
+
+app.listen(PORT, () => console.log(`Listening on port ${PORT} at ${new Date().toLocaleString()}`))
