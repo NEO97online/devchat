@@ -1,42 +1,43 @@
-import React, { Component, Fragment } from "react"
-import "./App.css"
-import socket from "./services/socket"
+import React, { Component, Fragment } from 'react'
+import './App.css'
+import socket from './services/socket'
 
 class App extends Component {
   constructor() {
     super()
     this.state = {
-      chatboxText: "",
+      chatboxText: '',
       messages: []
     }
     socket.listen(this.receiveMessage)
   }
 
-  handleKeyDown = (event) => {
+  handleKeyDown = event => {
+    // enter key (13) without shift
     if (event.which === 13 && !event.shiftKey) {
       this.sendMessage()
-      event.preventDefault()
+      event.preventDefault() // prevents new line in <textarea>
     }
   }
 
-  handleInputChange = (event) => {
+  handleInputChange = event => {
     const { name, value } = event.target
     this.setState({
       [name]: value
     })
   }
 
-  receiveMessage = (message) => {
+  receiveMessage = message => {
     this.setState({
       messages: [...this.state.messages, message.data]
     })
   }
-  
+
   sendMessage = () => {
     if (this.state.chatboxText) {
       socket.send(this.state.chatboxText)
       this.setState({
-        chatboxText: ""
+        chatboxText: ''
       })
     }
   }
@@ -44,22 +45,18 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        {
-          this.state.messages.map(message => (
-            <div className ="chatArea">
-              { message }
-            </div>
-          ))
-        }
-        <div className ="container">
+        {this.state.messages.map(message => (
+          <div className="chatArea">{message}</div>
+        ))}
+        <div className="container">
           <div className="chatbox">
-            <textarea 
+            <textarea
               placeholder="Enter text"
               name="chatboxText"
-              cols="100" 
+              cols="100"
               rows="3"
-              onChange={this.handleInputChange}
               value={this.state.chatboxText}
+              onChange={this.handleInputChange}
               onKeyDown={this.handleKeyDown}
             />
             <button onClick={this.sendMessage}>Send</button>

@@ -1,0 +1,25 @@
+{
+  "name": "devchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "start:server": "cd server && npm start",
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install && npm run build",
+    "heroku-postbuild": "npm run build:client && npm run build:server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelauderer/devchat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaelauderer/devchat/issues"
+  },
+  "homepage": "https://github.com/michaelauderer/devchat#readme"
+}
