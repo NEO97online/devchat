@@ -1,4 +1,5 @@
-const connection = new WebSocket('ws://localhost:4000') // Update for production variable
+const URL = window.location.hostname === "localhost" ? "localhost:4000" : "devchat.io"
+const connection = new WebSocket(`ws://${URL}`) // Update for production variable
 
 connection.onopen = () => {
   console.log('connected socket')

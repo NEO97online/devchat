@@ -15,6 +15,7 @@ const wss = expressWs(app).getWss()
 
 // app.ws is added by running expressWs(app) on line 14
 app.ws('/', (client, req) => {
+  // need to try/catch because express-ws is catching our errors without logging them 😠
   try {
     client.send(`{ "connection": "ok" }`) // connection sucessful
     client.on('message', message => {
