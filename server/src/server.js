@@ -10,6 +10,7 @@ import Message from './models/Message'
 import jwt from 'jsonwebtoken'
 import log from 'loglevel'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 const PORT = process.env.PORT || 4000
 
@@ -28,6 +29,7 @@ mongoose
 const app = express()
 app.use(helmet()) // Always wear a helment!
 app.use(bodyParser.json())
+app.use(cors({ origin: true })) // for development purposes only, edit later
 const wss = expressWs(app).getWss()
 
 // app.ws is added by running expressWs(app) on line 14
@@ -84,6 +86,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { displayName, email, password } = req.body
+  console.log(req.body)
   // generate a unique tag
   let tag
   let currentTry = 0
@@ -102,6 +105,7 @@ app.post("/register", async (req, res) => {
     password,
     email
   })
+  console.log(user)
   await user.save()
   res.send(`Created account: ${displayName}#${tag}`)
 })

@@ -1,0 +1,27 @@
+.container {
+  position: fixed;
+  bottom: 0;
+}
+.chatbox {
+  display: inline-block;
+  position: relative; /* stay relative */
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+
+.chatbox button {
+  position:absolute;
+  bottom:0px;
+  right:-47px;
+  height:52px; 
+}
+
+.chatArea {
+  padding: 2px 25px;
+  display: block;
+}
+
+.chatbox textarea {
+  resize: none;
+}
