@@ -11,6 +11,8 @@ import jwt from 'jsonwebtoken'
 import log from 'loglevel'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import bcrypt, { hash } from 'bcrypt'
+const saltRounds = 10;
 
 const PORT = process.env.PORT || 4000
 
@@ -75,7 +77,15 @@ app.ws('/', (client, req) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email }).exec()
-  if (user && (user.password === password)) {
+
+  const verifiesHash = bcrypt.compare(password, hash, function (err, res) {
+    if (err) {
+      console.error(err)
+      return res
+    }
+  })
+  
+  if (user && verifiesHash) {
     const token = jwt.sign({ email: user.email }, process.env.JWT_KEY, { expiresIn: 14 * 8640000 /* 2 weeks */ })
     res.send(token)
     log.info("Sent JWT")
@@ -86,7 +96,15 @@ app.post("/login", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { displayName, email, password } = req.body
-  console.log(req.body)
+
+  password = bcrypt.hash(password, saltRounds, (err, hash) => {
+    if (err) {
+      console.error(err)
+      return
+    } 
+    return hash
+  })
+
   // generate a unique tag
   let tag
   let currentTry = 0
