@@ -1,0 +1,7 @@
+{
+  "extends": "@silverstone",
+  "rules": {
+    "indent": ["warn", 2],
+    "quotes": ["warn", "double"]
+  }
+}
