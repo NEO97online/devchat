@@ -12,6 +12,10 @@ class Messages extends Component {
     socket.listen(this.receiveMessage)
   }
 
+  componentDidMount = () => {
+    
+  }
+
   handleKeyDown = event => {
     // enter key (13) without shift
     if (event.which === 13 && !event.shiftKey) {
@@ -45,8 +49,8 @@ class Messages extends Component {
   render() {
     return (
       <Fragment>
-        {this.state.messages.map(message => (
-          <pre>
+        {this.state.messages.map((message, i) => (
+          <pre key={i}>
             <div className="chatArea">{message}</div>
           </pre>
         ))}

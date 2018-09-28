@@ -16,6 +16,15 @@ const saltRounds = 10
 
 const PORT = process.env.PORT || 4000
 
+function toEvent(message) {
+  try {
+    const event = JSON.parse(message)
+    this.emit(event.type, event.payload)
+  } catch (err) {
+    console.log("not an event", err)
+  }
+}
+
 mongoose
   .connect(
     process.env.MONGODB_URL,
@@ -40,35 +49,34 @@ app.ws("/", (client, req) => {
 
   // need to try/catch because express-ws is catching our errors without logging them 😠
   try {
-    client.send("{ \"connection\": \"ok\" }") // connection sucessful
-    client.on("message", async content => {
-      log.warn(`received: ${content}`)
+    client.send(JSON.stringify({ connection: "ok" })) // connection sucessful
 
-      // handle commands
-      if (content[0] === "/") {
-        const args = content.split(" ")
-        const command = args.shift()
-        // Register <displayName> <email> <password>
-        if (command === "/register") {
-          const [displayName, email, password] = args
-          
+    client
+      .on("message", toEvent)
+      .on("authenticate", async token => {
+        const tokenData = jwt.verify(token, process.env.JWT_KEY)
+        if (tokenData) {
+          const user = await User.findOne({ email: tokenData.email }).exec()
+          displayName = user.displayName
         }
-        return
-      }
-
-      // normal message
-      const message = new Message({
-        content,
-        displayName,
-        time: +new Date()
       })
-      await message.save()
+      .on("message", async content => {
+        log.warn(`received: ${content}`)
 
-      // broadcast to other clients
-      wss.clients.forEach(otherClient => {
-        otherClient.send(`${displayName}: ${content}`)
+        // normal message
+        const message = new Message({
+          content,
+          displayName,
+          time: +new Date()
+        })
+
+        await message.save()
+
+        // broadcast to other clients
+        wss.clients.forEach(otherClient => {
+          otherClient.send(`${displayName}: ${content}`)
+        })
       })
-    })
   } catch (err) {
     console.error(err)
   }
@@ -78,19 +86,19 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email }).exec()
 
-  const verifiesHash = await bcrypt.compare(password, user.password)
-  
   if (!user) {
-    res.status(403).send({ message: "This email isn't in use" })
+    res.status(403).json({ error: { level: "danger", message: "This account does not exist!" } })
     return
   }
 
+  const verifiesHash = await bcrypt.compare(password, user.password)
+
   if (verifiesHash) {
     const token = jwt.sign({ email: user.email }, process.env.JWT_KEY, { expiresIn: 14 * 8640000 })
-    res.send(token)
+    res.json(token)
     log.info("Sent JWT")
   } else {
-    res.status(403).send({message: "Invalid information. Please check username and password."})
+    res.status(403).json({ error: { level: "danger", message: "Invalid information. Please check email and password." } })
   }
 })
 

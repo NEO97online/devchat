@@ -3,11 +3,17 @@ const connection = new WebSocket(`ws://${URL}`) // Update for production variabl
 
 connection.onopen = () => {
   console.log('connected socket')
-  connection.send('Ping')
+
+  const token = window.localStorage.getItem('devchat-auth')
+  emit({ type: 'authenticate', payload: token })
 }
 
 connection.onerror = (error) => {  
   console.log(`WebSocket error: ${error.toString()}`)
+}
+
+const emit = ({ type, payload }) => {
+  connection.send(JSON.stringify({ type, payload }))
 }
 
 const send = (message) => {
@@ -19,6 +25,7 @@ const listen = (callback) => {
 }
 
 export default {
+  emit,
   send,
   listen
 }
